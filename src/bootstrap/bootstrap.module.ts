@@ -12,6 +12,7 @@ import { DataSource } from 'typeorm'
       driver: ApolloDriver,
       sortSchema: true,
       autoSchemaFile: true,
+      path: '/unity/graphql',
       // formatError: (error) => {
       //   const graphQLFormattedError = {
       //     name: error.name,
