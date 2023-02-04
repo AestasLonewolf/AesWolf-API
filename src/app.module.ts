@@ -1,9 +1,12 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { Module } from '@nestjs/common'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { UserModule } from './resources/user/user.module'
+import { GuildModule } from './resources/guild/guild.module'
+import { BootstrapModule } from './bootstrap/bootstrap.module'
 
 @Module({
-  imports: [],
+  imports: [BootstrapModule, UserModule, GuildModule],
   controllers: [AppController],
   providers: [AppService],
 })
