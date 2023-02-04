@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn } from 'typeorm'
-import { ObjectType, Field, ID } from '@nestjs/graphql'
+import { ObjectType, Field, ID, InputType } from '@nestjs/graphql'
 import { ObjectId } from 'mongodb'
+import { Settings } from './settings/guildSettings.entity'
 
 @Entity()
 @ObjectType()
@@ -16,6 +17,10 @@ export class Guild {
   @Field()
   @Column()
   name: string
+
+  @Field(() => Settings)
+  @Column(() => Settings)
+  settings: Settings
 
   @Field({ nullable: true })
   @CreateDateColumn({ type: 'timestamp', nullable: true })

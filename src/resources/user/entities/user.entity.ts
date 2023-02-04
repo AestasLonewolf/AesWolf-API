@@ -29,9 +29,9 @@ export class User {
   @Column()
   role: UserRole
 
-  @Field(() => [GuildData], { nullable: true })
+  @Field(() => [GuildData], { defaultValue: [] })
   @Column()
-  guildData: GuildData[]
+  guilds: GuildData[]
 
   @Field({ nullable: true })
   @CreateDateColumn({ type: 'timestamp', nullable: true })
