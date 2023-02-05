@@ -6,6 +6,8 @@ import { UpdateUserInput } from './dto/update-user.input'
 import { GuildData } from '../guild/entities/guildData.entity'
 import { Guild } from '../guild/entities/guild.entity'
 import { GuildService } from '../guild/guild.service'
+import { UseGuards } from '@nestjs/common'
+import { DiscordGuard } from 'src/auth/guards/discord.guard'
 
 @Resolver(() => User)
 export class UserResolver {
@@ -19,6 +21,7 @@ export class UserResolver {
     return this.userService.create(createUserInput)
   }
 
+  @UseGuards(DiscordGuard)
   @Query(() => [User], { name: 'users' })
   findAll() {
     return this.userService.findAll()

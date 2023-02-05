@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from './entities/user.entity'
 import { GuildService } from '../guild/guild.service'
 import { Guild } from '../guild/entities/guild.entity'
+import { HttpModule } from '@nestjs/axios/dist/http.module'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Guild])],
+  imports: [TypeOrmModule.forFeature([User, Guild]), HttpModule],
   providers: [UserResolver, UserService, GuildService],
 })
 export class UserModule {}
