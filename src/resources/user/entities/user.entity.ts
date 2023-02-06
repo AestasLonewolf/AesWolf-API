@@ -1,7 +1,14 @@
 import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql'
 import { ObjectId } from 'mongodb'
-import { GuildData } from 'src/resources/guild/entities/guildData.entity'
-import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn } from 'typeorm'
+import { GuildData } from 'src/resources/guild-data/entities/guild-data.entity'
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  ObjectIdColumn,
+  UpdateDateColumn,
+} from 'typeorm'
 
 export enum UserRole {
   'BANNED' = 0,
@@ -33,7 +40,6 @@ export class User {
   role: UserRole
 
   @Field(() => [GuildData], { defaultValue: [] })
-  @Column()
   guilds: GuildData[]
 
   @Field({ nullable: true })
@@ -43,4 +49,8 @@ export class User {
   @Field({ nullable: true })
   @UpdateDateColumn({ type: 'timestamp', nullable: true })
   updatedAt?: Date
+
+  @Field({ nullable: true })
+  @DeleteDateColumn({ type: 'timestamp', nullable: true })
+  deletedAt?: Date
 }

@@ -4,7 +4,6 @@ import { User } from './entities/user.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Injectable } from '@nestjs/common'
 import { Repository } from 'typeorm'
-import { ObjectId } from 'mongodb'
 
 @Injectable()
 export class UserService {
@@ -21,20 +20,21 @@ export class UserService {
     return this.userRepo.find()
   }
 
-  findOne(id: string) {
-    return this.userRepo.findOne(new ObjectId(id))
-  }
-
   findOneByUid(uid: string) {
     return this.userRepo.findOneBy({ uid })
   }
 
-  async update(id: string, updateUserInput: UpdateUserInput) {
-    await this.userRepo.update(new ObjectId(id), updateUserInput)
-    return this.findOne(id)
+  async update(uid: string, updateUserInput: UpdateUserInput) {
+    await this.userRepo.update({ uid }, updateUserInput)
+    return this.findOneByUid(uid)
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} user`
+  async remove(uid: string) {
+    // soft remove
+    await this.userRepo.update({ uid }, { deletedAt: new Date() })
+  }
+
+  async restore(uid: string) {
+    await this.userRepo.update({ uid }, { deletedAt: null })
   }
 }

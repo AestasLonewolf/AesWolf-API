@@ -1,14 +1,14 @@
-import { Module } from '@nestjs/common'
-import { UserService } from './user.service'
-import { UserResolver } from './user.resolver'
-import { TypeOrmModule } from '@nestjs/typeorm'
-import { User } from './entities/user.entity'
-import { GuildService } from '../guild/guild.service'
-import { Guild } from '../guild/entities/guild.entity'
 import { HttpModule } from '@nestjs/axios/dist/http.module'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { Module } from '@nestjs/common'
+import { User } from './entities/user.entity'
+import { UserResolver } from './user.resolver'
+import { UserService } from './user.service'
+import { GuildDataService } from '../guild-data/guild-data.service'
+import { GuildData } from '../guild-data/entities/guild-data.entity'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Guild]), HttpModule],
-  providers: [UserResolver, UserService, GuildService],
+  imports: [TypeOrmModule.forFeature([User, GuildData]), HttpModule],
+  providers: [UserResolver, UserService, GuildDataService],
 })
 export class UserModule {}

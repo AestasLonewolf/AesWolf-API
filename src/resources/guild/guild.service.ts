@@ -4,7 +4,6 @@ import { Guild } from './entities/guild.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Injectable } from '@nestjs/common'
 import { Repository } from 'typeorm'
-import { ObjectId } from 'mongodb'
 
 @Injectable()
 export class GuildService {
@@ -21,20 +20,20 @@ export class GuildService {
     return this.guildRepo.find()
   }
 
-  findOne(id: string) {
-    return this.guildRepo.findOne(new ObjectId(id))
-  }
-
   findOneByGuid(guid: string) {
     return this.guildRepo.findOneBy({ guid })
   }
 
-  async update(id: string, updateGuildInput: UpdateGuildInput) {
-    await this.guildRepo.update(new ObjectId(id), updateGuildInput)
-    return this.findOne(id)
+  async update(guid: string, updateGuildInput: UpdateGuildInput) {
+    await this.guildRepo.update({ guid }, updateGuildInput)
+    return this.findOneByGuid(guid)
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} guild`
+  remove(guid: string) {
+    return this.guildRepo.update({ guid }, { deletedAt: new Date() })
+  }
+
+  restore(guid: string) {
+    return this.guildRepo.update({ guid }, { deletedAt: null })
   }
 }

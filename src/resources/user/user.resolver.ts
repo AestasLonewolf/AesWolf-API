@@ -1,21 +1,25 @@
-import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql'
-import { UserService } from './user.service'
-import { User, UserRole } from './entities/user.entity'
+import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql'
+import { UseGuards } from '@nestjs/common'
+import { RolesGuard } from 'src/auth/guards/role.guard'
+import { DiscordGuard } from 'src/auth/guards/discord.guard'
 import { CreateUserInput } from './dto/create-user.input'
 import { UpdateUserInput } from './dto/update-user.input'
-import { GuildData } from '../guild/entities/guildData.entity'
-import { Guild } from '../guild/entities/guild.entity'
-import { GuildService } from '../guild/guild.service'
-import { UseGuards } from '@nestjs/common'
-import { DiscordGuard } from 'src/auth/guards/discord.guard'
-import { RolesGuard } from 'src/auth/guards/role.guard'
+import { User, UserRole } from './entities/user.entity'
+import { UserService } from './user.service'
+import { GuildDataService } from '../guild-data/guild-data.service'
+import { GuildData } from '../guild-data/entities/guild-data.entity'
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(
     private readonly userService: UserService,
-    private readonly guildService: GuildService,
+    private readonly guildDataService: GuildDataService,
   ) {}
+
+  @ResolveField()
+  guilds(@Parent() user: User): Promise<GuildData[]> {
+    return this.guildDataService.findAllByUid(user.uid)
+  }
 
   @Mutation(() => User)
   createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
@@ -23,26 +27,31 @@ export class UserResolver {
   }
 
   @UseGuards(DiscordGuard, RolesGuard(UserRole.DEVELOPER))
-  @Query(() => [User], { name: 'users' })
+  @Query(() => [User], { name: 'allUsers' })
   findAll() {
     return this.userService.findAll()
   }
 
   @Query(() => User, { name: 'user' })
-  findOne(@Args('id', { type: () => String }) id: string) {
-    return this.userService.findOne(id)
+  findOne(@Args('uid', { type: () => String }) uid: string) {
+    return this.userService.findOneByUid(uid)
   }
 
   @Mutation(() => User)
   updateUser(
-    @Args('id', { type: () => String }) id: string,
+    @Args('uid', { type: () => String }) uid: string,
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
   ) {
-    return this.userService.update(id, updateUserInput)
+    return this.userService.update(uid, updateUserInput)
   }
 
   @Mutation(() => User)
-  removeUser(@Args('id', { type: () => String }) id: string) {
-    return this.userService.remove(id)
+  removeUser(@Args('uid', { type: () => String }) uid: string) {
+    return this.userService.remove(uid)
+  }
+
+  @Mutation(() => User)
+  restoreUser(@Args('uid', { type: () => String }) uid: string) {
+    return this.userService.restore(uid)
   }
 }

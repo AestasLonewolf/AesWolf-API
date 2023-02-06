@@ -24,7 +24,8 @@ export class DiscordGuard implements CanActivate {
         }),
       )
       // get user from database
-      const user = await this.userService.findOneByUid((await response).data.id)
+      const id = (await response).data.id
+      const user = await this.userService.findOneByUid(id)
       // set user in context
       ctx.getContext().req.user = user
 

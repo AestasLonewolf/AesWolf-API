@@ -7,9 +7,10 @@ import { BootstrapModule } from './bootstrap/bootstrap.module'
 import { UtilModule } from './utils/util.module'
 import { HttpModule } from '@nestjs/axios/dist/http.module'
 import { AuthModule } from './auth/auth.module'
+import { GuildDataModule } from './resources/guild-data/guild-data.module';
 
 @Module({
-  imports: [BootstrapModule, AuthModule, UtilModule, UserModule, GuildModule],
+  imports: [BootstrapModule, AuthModule, UtilModule, UserModule, GuildModule, GuildDataModule],
   controllers: [AppController],
   providers: [AppService],
 })

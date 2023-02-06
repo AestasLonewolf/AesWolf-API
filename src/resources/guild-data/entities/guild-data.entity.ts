@@ -7,27 +7,32 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 import { ObjectType, Field, ID } from '@nestjs/graphql'
+import { Guild } from 'src/resources/guild/entities/guild.entity'
 import { ObjectId } from 'mongodb'
-import { Settings } from './settings/guildSettings.entity'
+import { User } from 'src/resources/user/entities/user.entity'
 
 @Entity()
-@ObjectType()
-export class Guild {
+@ObjectType({ description: "User's data that's specific to a Guild " })
+export class GuildData {
   @Field(() => ID, { description: 'MongoDB ObjectID' })
   @ObjectIdColumn()
   id: ObjectId
 
-  @Field({ description: 'Discord Guild ID' })
-  @Column({ unique: true }) // TODO: add validation
+  @Field(() => Guild, { nullable: true })
+  guild: Guild
+
+  @Column()
   guid: string
 
-  @Field()
-  @Column()
-  name: string
+  @Field(() => User, { nullable: true })
+  user: User
 
-  @Field(() => Settings)
-  @Column(() => Settings)
-  settings: Settings
+  @Column()
+  uid: string
+
+  @Field({ description: 'EXP amount in Guild', defaultValue: 0 })
+  @Column()
+  exp: number
 
   @Field({ nullable: true })
   @CreateDateColumn({ type: 'timestamp', nullable: true })

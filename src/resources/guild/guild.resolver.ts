@@ -1,28 +1,14 @@
-import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql'
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { GuildService } from './guild.service'
 import { Guild } from './entities/guild.entity'
 import { CreateGuildInput } from './dto/create-guild.input'
 import { UpdateGuildInput } from './dto/update-guild.input'
-import { GuildData } from './entities/guildData.entity'
-
-@Resolver(() => GuildData)
-export class GuildDataResolver {
-  constructor(private readonly guildService: GuildService) {}
-
-  @ResolveField()
-  guild(@Parent() gData: GuildData): Promise<Guild> {
-    return this.guildService.findOneByGuid(gData.guid)
-  }
-}
 
 @Resolver(() => Guild)
 export class GuildResolver {
   constructor(private readonly guildService: GuildService) {}
 
-  @Mutation(() => Guild)
-  createGuild(@Args('createGuildInput') createGuildInput: CreateGuildInput) {
-    return this.guildService.create(createGuildInput)
-  }
+  //////* QUERIES ///////
 
   @Query(() => [Guild], { name: 'guilds' })
   findAll() {
@@ -30,20 +16,32 @@ export class GuildResolver {
   }
 
   @Query(() => Guild, { name: 'guild' })
-  findOne(@Args('id', { type: () => String }) id: string) {
-    return this.guildService.findOne(id)
+  findByGuid(@Args('guid', { type: () => String }) guid: string) {
+    return this.guildService.findOneByGuid(guid)
+  }
+
+  //////* MUTATIONS ///////
+
+  @Mutation(() => Guild)
+  createGuild(@Args('createGuildInput') createGuildInput: CreateGuildInput) {
+    return this.guildService.create(createGuildInput)
   }
 
   @Mutation(() => Guild)
   updateGuild(
-    @Args('id', { type: () => String }) id: string,
+    @Args('guid', { type: () => String }) guid: string,
     @Args('updateGuildInput') updateGuildInput: UpdateGuildInput,
   ) {
-    return this.guildService.update(id, updateGuildInput)
+    return this.guildService.update(guid, updateGuildInput)
   }
 
   @Mutation(() => Guild)
-  removeGuild(@Args('id', { type: () => String }) id: string) {
-    return this.guildService.remove(id)
+  removeGuild(@Args('guid', { type: () => String }) guid: string) {
+    return this.guildService.remove(guid)
+  }
+
+  @Mutation(() => Guild)
+  restoreGuild(@Args('guid', { type: () => String }) guid: string) {
+    return this.guildService.restore(guid)
   }
 }
