@@ -1,32 +1,36 @@
-import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn } from 'typeorm'
-import { ObjectType, Field, ID, InputType } from '@nestjs/graphql'
-import { ObjectId } from 'mongodb'
+import { ObjectType, Field } from '@nestjs/graphql'
 import { Settings } from './settings/guildSettings.entity'
+import { Prop, Schema } from '@nestjs/mongoose'
+import { SchemaFactory } from '@nestjs/mongoose/dist'
+import { HydratedDocument } from 'mongoose'
 
-@Entity()
+@Schema({ timestamps: true })
 @ObjectType()
 export class Guild {
-  @Field(() => ID, { description: 'MongoDB ObjectID' })
-  @ObjectIdColumn()
-  id: ObjectId
-
   @Field({ description: 'Discord Guild ID' })
-  @Column({ unique: true }) // TODO: add validation
+  @Prop({ unique: true })
   guid: string
 
   @Field()
-  @Column()
+  @Prop()
   name: string
 
   @Field(() => Settings)
-  @Column(() => Settings)
+  @Prop()
   settings: Settings
 
-  @Field({ nullable: true })
-  @CreateDateColumn({ type: 'timestamp', nullable: true })
+  @Prop()
+  @Field(() => Date, { description: 'Created At' })
   createdAt?: Date
 
-  @Field({ nullable: true })
-  @UpdateDateColumn({ type: 'timestamp', nullable: true })
+  @Prop()
+  @Field(() => Date, { description: 'Updated At' })
   updatedAt?: Date
+
+  @Prop()
+  @Field(() => Date, { description: 'Deleted At' })
+  deletedAt?: Date
 }
+
+export type GuildDocument = HydratedDocument<Guild>
+export const GuildSchema = SchemaFactory.createForClass(Guild)

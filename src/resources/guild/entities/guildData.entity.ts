@@ -1,26 +1,16 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  Index,
-  ObjectIdColumn,
-  Unique,
-  UpdateDateColumn,
-} from 'typeorm'
-import { ObjectType, Field, ID, InputType, ResolveField } from '@nestjs/graphql'
-import { ObjectId } from 'mongodb'
+import { ObjectType, Field } from '@nestjs/graphql'
 import { Guild } from './guild.entity'
+import { Prop } from '@nestjs/mongoose'
 
 @ObjectType({ description: "User's data that's specific to a Guild " })
 export class GuildData {
   @Field(() => Guild, { nullable: true })
   guild: Guild
 
-  @Column({ unique: true })
+  @Prop({ unique: true })
   guid: string
 
-  @Index({ fulltext: true })
   @Field({ description: 'EXP amount in Guild', defaultValue: 0 })
-  @Column()
+  @Prop({ default: 0, required: false })
   exp: number
 }

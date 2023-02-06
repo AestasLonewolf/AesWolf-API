@@ -1,48 +1,38 @@
 import { CreateUserInput } from './dto/create-user.input'
 import { UpdateUserInput } from './dto/update-user.input'
-import { User } from './entities/user.entity'
-import { InjectRepository } from '@nestjs/typeorm'
+import { User, UserDocument } from './entities/user.entity'
 import { Injectable } from '@nestjs/common'
-import { Repository } from 'typeorm'
 import { ObjectId } from 'mongodb'
+import { InjectModel } from '@nestjs/mongoose/dist'
+import { Model } from 'mongoose'
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepo: Repository<User>,
+    @InjectModel(User.name)
+    private readonly userRepo: Model<UserDocument>,
   ) {}
 
-  create(createUserInput: CreateUserInput) {
-    return this.userRepo.save(createUserInput)
+  create(createUserInput: CreateUserInput): Promise<User> {
+    const newUser = new this.userRepo(createUserInput)
+    return newUser.save()
   }
 
-  findAll() {
-    return this.userRepo.find()
+  async findAll(): Promise<User[]> {
+    const users = await this.userRepo.find().exec()
+    return users
   }
 
-  findOne(id: string) {
-    return this.userRepo.findOne(new ObjectId(id))
+  findOne(id: string): Promise<User> {
+    return this.userRepo.findOne(new ObjectId(id)).exec()
   }
 
-  findOneByUid(uid: string) {
-    return this.userRepo.findOneBy({ uid })
+  findOneByUid(uid: string): Promise<User> {
+    return this.userRepo.findOne({ uid }).exec()
   }
 
-  async findGuildDataByGuid(guid: string) {
-    const res = await this.userRepo.find({
-      where: {
-        guilds: {
-          guid: guid,
-        },
-      },
-    })
-
-    return res
-  }
-
-  async update(id: string, updateUserInput: UpdateUserInput) {
-    await this.userRepo.update(new ObjectId(id), updateUserInput)
+  async update(id: string, updateUserInput: UpdateUserInput): Promise<User> {
+    await this.userRepo.findOneAndUpdate(new ObjectId(id), updateUserInput).exec()
     return this.findOne(id)
   }
 

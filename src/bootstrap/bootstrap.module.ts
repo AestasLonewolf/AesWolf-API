@@ -25,31 +25,22 @@ import { MongooseModule } from '@nestjs/mongoose/dist'
       // },
     }),
 
-    TypeOrmModule.forRootAsync({
-      useFactory: () => ({
-        type: 'mongodb',
-        url: process.env.MONGO_URI,
-        entities: [__dirname + '/../**/*.entity.{js,ts}'],
-        synchronize: true, // Careful with this in production
-        useNewUrlParser: true,
-        useUnifiedTopology: true, // Disable deprecated warnings
-      }),
+    // TypeOrmModule.forRootAsync({
+    //   useFactory: () => ({
+    //     type: 'mongodb',
+    //     url: process.env.MONGO_URI,
+    //     entities: [__dirname + '/../**/*.entity.{js,ts}'],
+    //     synchronize: true, // Careful with this in production
+    //     useNewUrlParser: true,
+    //     useUnifiedTopology: true, // Disable deprecated warnings
+    //   }),
 
-      dataSourceFactory: async (options) => {
-        const dataSource = await new DataSource(options).initialize()
-        return dataSource
-      },
-    }),
-    MongooseModule.forRootAsync({
-      useFactory: () => ({
-        type: 'mongodb',
-        url: process.env.MONGO_URI,
-        entities: [__dirname + '/../**/*.entity.{js,ts}'],
-        synchronize: true, // Careful with this in production
-        useNewUrlParser: true,
-        useUnifiedTopology: true, // Disable deprecated warnings
-      }),
-    }),
+    //   dataSourceFactory: async (options) => {
+    //     const dataSource = await new DataSource(options).initialize()
+    //     return dataSource
+    //   },
+    // }),
+    MongooseModule.forRoot(process.env.MONGO_URI),
   ],
 })
 export class BootstrapModule {}

@@ -1,36 +1,37 @@
 import { CreateGuildInput } from './dto/create-guild.input'
 import { UpdateGuildInput } from './dto/update-guild.input'
-import { Guild } from './entities/guild.entity'
-import { InjectRepository } from '@nestjs/typeorm'
+import { Guild, GuildDocument } from './entities/guild.entity'
 import { Injectable } from '@nestjs/common'
-import { Repository } from 'typeorm'
 import { ObjectId } from 'mongodb'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model } from 'mongoose'
 
 @Injectable()
 export class GuildService {
   constructor(
-    @InjectRepository(Guild)
-    private readonly guildRepo: Repository<Guild>,
+    @InjectModel(Guild.name)
+    private readonly guildRepo: Model<GuildDocument>,
   ) {}
 
   create(createGuildInput: CreateGuildInput) {
-    return this.guildRepo.save(createGuildInput)
+    const newGuild = new this.guildRepo(createGuildInput)
+    return newGuild.save()
   }
 
-  findAll() {
-    return this.guildRepo.find()
+  findAll(): Promise<Guild[]> {
+    return this.guildRepo.find().exec()
   }
 
-  findOne(id: string) {
-    return this.guildRepo.findOne(new ObjectId(id))
+  findOne(id: string): Promise<Guild> {
+    return this.guildRepo.findOne(new ObjectId(id)).exec()
   }
 
-  findOneByGuid(guid: string) {
-    return this.guildRepo.findOneBy({ guid })
+  findOneByGuid(guid: string): Promise<Guild> {
+    return this.guildRepo.findOne({ guid }).exec()
   }
 
-  async update(id: string, updateGuildInput: UpdateGuildInput) {
-    await this.guildRepo.update(new ObjectId(id), updateGuildInput)
+  async update(id: string, updateGuildInput: UpdateGuildInput): Promise<Guild> {
+    await this.guildRepo.findOneAndUpdate(new ObjectId(id), updateGuildInput).exec()
     return this.findOne(id)
   }
 

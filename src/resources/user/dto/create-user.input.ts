@@ -1,12 +1,5 @@
-import { InputType, Int, Field } from '@nestjs/graphql'
-import {
-  ArrayUnique,
-  arrayUnique,
-  IsByteLength,
-  IsNumberString,
-  IsUUID,
-  Length,
-} from 'class-validator'
+import { InputType, Field } from '@nestjs/graphql'
+import { ArrayUnique, IsNumberString } from 'class-validator'
 import { CreateGuildDataInput } from 'src/resources/guild/dto/create-guildData.input'
 import { GuildData } from 'src/resources/guild/entities/guildData.entity'
 

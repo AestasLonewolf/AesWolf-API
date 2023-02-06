@@ -1,18 +1,18 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Column } from 'typeorm'
+import { Prop } from '@nestjs/mongoose'
 import { LevelSettings } from './levelSettings.entity'
 
 @ObjectType()
 export class Settings {
   @Field({ defaultValue: '!' })
-  @Column()
+  @Prop({ default: '!' })
   prefix: string
 
   @Field({ defaultValue: false })
-  @Column()
+  @Prop({ default: false })
   levelingEnabled: boolean
 
   @Field(() => LevelSettings, { defaultValue: {} })
-  @Column(() => LevelSettings)
+  @Prop()
   levelSettings: LevelSettings
 }

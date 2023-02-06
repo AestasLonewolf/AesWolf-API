@@ -1,17 +1,13 @@
-import { CreateGuildInput } from './dto/create-guild.input'
-import { UpdateGuildInput } from './dto/update-guild.input'
-import { Guild } from './entities/guild.entity'
-import { InjectRepository } from '@nestjs/typeorm'
 import { Injectable } from '@nestjs/common'
-import { Repository } from 'typeorm'
-import { ObjectId } from 'mongodb'
-import { User } from '../user/entities/user.entity'
+import { User, UserDocument } from '../user/entities/user.entity'
+import { InjectModel } from '@nestjs/mongoose/dist'
+import { Model } from 'mongoose'
 
 @Injectable()
 export class GuildDataService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepo: Repository<User>,
+    @InjectModel(User.name)
+    private readonly userRepo: Model<UserDocument>,
   ) {}
 
   findTopUsersByGuid(guid: string) {

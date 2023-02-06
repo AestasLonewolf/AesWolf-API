@@ -1,10 +1,8 @@
-import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql'
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { UserService } from './user.service'
 import { User, UserRole } from './entities/user.entity'
 import { CreateUserInput } from './dto/create-user.input'
 import { UpdateUserInput } from './dto/update-user.input'
-import { GuildData } from '../guild/entities/guildData.entity'
-import { Guild } from '../guild/entities/guild.entity'
 import { GuildService } from '../guild/guild.service'
 import { UseGuards } from '@nestjs/common'
 import { DiscordGuard } from 'src/auth/guards/discord.guard'
@@ -26,11 +24,6 @@ export class UserResolver {
   @Query(() => [User], { name: 'users' })
   findAll() {
     return this.userService.findAll()
-  }
-
-  @Query(() => [User])
-  async findGuildDataByGuid(@Args('guid', { type: () => String }) guid: string) {
-    return await this.userService.findGuildDataByGuid(guid)
   }
 
   @Query(() => User, { name: 'user' })

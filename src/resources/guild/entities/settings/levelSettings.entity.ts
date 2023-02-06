@@ -1,49 +1,49 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Column } from 'typeorm'
+import { Prop } from '@nestjs/mongoose'
 
 @ObjectType({ description: "Settings for the Guild's leveling system" })
 export class LevelSettings {
   @Field({ defaultValue: 20, description: 'Minimum amount of experience someone can gain' })
-  @Column()
+  @Prop({ default: 20 })
   minExp: number
 
   @Field({ defaultValue: 30, description: 'Maximum amount of experience someone can gain' })
-  @Column()
+  @Prop({ default: 30 })
   maxExp: number
 
   @Field({
     defaultValue: 0.12,
     description: 'Decides how much EXP is worth, the higher the value = higher User level from EXP',
   })
-  @Column()
+  @Prop({ default: 0.12 })
   constant: number
 
   @Field({ defaultValue: 1, description: 'Multiplier for EXP gain' })
-  @Column()
+  @Prop({ default: 1 })
   multiplier: number
 
   @Field({ defaultValue: 30, description: 'Cooldown for EXP gain in seconds' })
-  @Column()
+  @Prop({ default: 30 })
   expCooldown: number
 
   @Field({
     defaultValue: '{user} leveled up to {role}!',
   })
-  @Column()
+  @Prop({ default: '{user} leveled up to {role}!' })
   levelUpMessage: string
 
   @Field(() => [LevelRole], { defaultValue: [] })
-  @Column()
+  @Prop()
   levelRoles: LevelRole[]
 }
 
 @ObjectType()
 class LevelRole {
   @Field()
-  @Column()
+  @Prop()
   level: number
 
   @Field()
-  @Column()
+  @Prop()
   role: string
 }

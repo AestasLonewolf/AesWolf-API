@@ -1,7 +1,6 @@
-import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql'
-import * as mongoose from 'mongoose'
+import { ObjectType, Field, registerEnumType } from '@nestjs/graphql'
+import { HydratedDocument } from 'mongoose'
 import { Prop, Schema } from '@nestjs/mongoose'
-import { ObjectId } from 'mongodb'
 import { GuildData } from 'src/resources/guild/entities/guildData.entity'
 import { SchemaFactory } from '@nestjs/mongoose/dist'
 
@@ -14,13 +13,9 @@ export enum UserRole {
 }
 registerEnumType(UserRole, { name: 'UseRole' })
 
-@Schema()
+@Schema({ timestamps: true })
 @ObjectType()
 export class User {
-  @Field(() => ID, { description: 'MongoDB ObjectID' })
-  @Prop({ type: () => ObjectId })
-  id: ObjectId
-
   @Prop({ unique: true })
   @Field({ description: 'Discord User ID' })
   uid: string
@@ -34,7 +29,7 @@ export class User {
   })
   role: UserRole
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'GuildData' }] })
+  @Prop()
   @Field(() => [GuildData], { defaultValue: [] })
   guilds: GuildData[]
 
@@ -45,6 +40,11 @@ export class User {
   @Prop()
   @Field(() => Date, { description: 'Updated At' })
   updatedAt?: Date
+
+  @Prop()
+  @Field(() => Date, { description: 'Deleted At' })
+  deletedAt?: Date
 }
 
+export type UserDocument = HydratedDocument<User>
 export const UserSchema = SchemaFactory.createForClass(User)
