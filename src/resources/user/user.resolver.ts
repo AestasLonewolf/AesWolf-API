@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql'
 import { UserService } from './user.service'
-import { User } from './entities/user.entity'
+import { User, UserRole } from './entities/user.entity'
 import { CreateUserInput } from './dto/create-user.input'
 import { UpdateUserInput } from './dto/update-user.input'
 import { GuildData } from '../guild/entities/guildData.entity'
@@ -8,6 +8,7 @@ import { Guild } from '../guild/entities/guild.entity'
 import { GuildService } from '../guild/guild.service'
 import { UseGuards } from '@nestjs/common'
 import { DiscordGuard } from 'src/auth/guards/discord.guard'
+import { RolesGuard } from 'src/auth/guards/role.guard'
 
 @Resolver(() => User)
 export class UserResolver {
@@ -21,7 +22,7 @@ export class UserResolver {
     return this.userService.create(createUserInput)
   }
 
-  @UseGuards(DiscordGuard)
+  @UseGuards(DiscordGuard, RolesGuard(UserRole.DEVELOPER))
   @Query(() => [User], { name: 'users' })
   findAll() {
     return this.userService.findAll()
