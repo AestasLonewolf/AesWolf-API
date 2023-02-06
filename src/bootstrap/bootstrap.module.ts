@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule } from '@nestjs/config'
 import { Module } from '@nestjs/common'
 import { DataSource } from 'typeorm'
+import { MongooseModule } from '@nestjs/mongoose/dist'
 
 @Module({
   imports: [
@@ -38,6 +39,16 @@ import { DataSource } from 'typeorm'
         const dataSource = await new DataSource(options).initialize()
         return dataSource
       },
+    }),
+    MongooseModule.forRootAsync({
+      useFactory: () => ({
+        type: 'mongodb',
+        url: process.env.MONGO_URI,
+        entities: [__dirname + '/../**/*.entity.{js,ts}'],
+        synchronize: true, // Careful with this in production
+        useNewUrlParser: true,
+        useUnifiedTopology: true, // Disable deprecated warnings
+      }),
     }),
   ],
 })

@@ -29,6 +29,18 @@ export class UserService {
     return this.userRepo.findOneBy({ uid })
   }
 
+  async findGuildDataByGuid(guid: string) {
+    const res = await this.userRepo.find({
+      where: {
+        guilds: {
+          guid: guid,
+        },
+      },
+    })
+
+    return res
+  }
+
   async update(id: string, updateUserInput: UpdateUserInput) {
     await this.userRepo.update(new ObjectId(id), updateUserInput)
     return this.findOne(id)

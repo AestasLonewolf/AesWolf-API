@@ -1,4 +1,12 @@
-import { Column, CreateDateColumn, Entity, ObjectIdColumn, Unique, UpdateDateColumn } from 'typeorm'
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  ObjectIdColumn,
+  Unique,
+  UpdateDateColumn,
+} from 'typeorm'
 import { ObjectType, Field, ID, InputType, ResolveField } from '@nestjs/graphql'
 import { ObjectId } from 'mongodb'
 import { Guild } from './guild.entity'
@@ -11,6 +19,7 @@ export class GuildData {
   @Column({ unique: true })
   guid: string
 
+  @Index({ fulltext: true })
   @Field({ description: 'EXP amount in Guild', defaultValue: 0 })
   @Column()
   exp: number

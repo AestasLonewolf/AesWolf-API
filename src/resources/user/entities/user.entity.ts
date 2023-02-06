@@ -1,7 +1,9 @@
 import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql'
+import * as mongoose from 'mongoose'
+import { Prop, Schema } from '@nestjs/mongoose'
 import { ObjectId } from 'mongodb'
 import { GuildData } from 'src/resources/guild/entities/guildData.entity'
-import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn } from 'typeorm'
+import { SchemaFactory } from '@nestjs/mongoose/dist'
 
 export enum UserRole {
   'BANNED' = 0,
@@ -12,35 +14,37 @@ export enum UserRole {
 }
 registerEnumType(UserRole, { name: 'UseRole' })
 
-@Entity()
+@Schema()
 @ObjectType()
 export class User {
   @Field(() => ID, { description: 'MongoDB ObjectID' })
-  @ObjectIdColumn()
+  @Prop({ type: () => ObjectId })
   id: ObjectId
 
+  @Prop({ unique: true })
   @Field({ description: 'Discord User ID' })
-  @Column({ unique: true })
   uid: string
 
+  @Prop()
   @Field(() => UserRole, {
     nullable: true,
     defaultValue: UserRole.USER,
     description:
       'User Role for the Bot, default is USER, 0 is BANNED, 1 is USER, 2 is DEVELOPER, 3 is OWNER, 4 is CLIENT',
   })
-  @Column()
   role: UserRole
 
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'GuildData' }] })
   @Field(() => [GuildData], { defaultValue: [] })
-  @Column()
   guilds: GuildData[]
 
-  @Field({ nullable: true })
-  @CreateDateColumn({ type: 'timestamp', nullable: true })
+  @Prop()
+  @Field(() => Date, { description: 'Created At' })
   createdAt?: Date
 
-  @Field({ nullable: true })
-  @UpdateDateColumn({ type: 'timestamp', nullable: true })
+  @Prop()
+  @Field(() => Date, { description: 'Updated At' })
   updatedAt?: Date
 }
+
+export const UserSchema = SchemaFactory.createForClass(User)

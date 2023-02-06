@@ -28,6 +28,11 @@ export class UserResolver {
     return this.userService.findAll()
   }
 
+  @Query(() => [User])
+  async findGuildDataByGuid(@Args('guid', { type: () => String }) guid: string) {
+    return await this.userService.findGuildDataByGuid(guid)
+  }
+
   @Query(() => User, { name: 'user' })
   findOne(@Args('id', { type: () => String }) id: string) {
     return this.userService.findOne(id)
