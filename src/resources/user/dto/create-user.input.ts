@@ -18,5 +18,5 @@ export class CreateUserInput {
 
   @Field(() => [CreateGuildDataInput])
   @ArrayUnique((item: CreateGuildDataInput) => item.guid)
-  guildData: GuildData[]
+  guilds: GuildData[]
 }
